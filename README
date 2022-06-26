@@ -1,0 +1,96 @@
+README - Homework 3 PC
+Druga Maria-Alexandra 323CBb
+maria.druga@stud.acs.upb.ro
+
+~ I have used the solution published on https://ocw.cs.pub.ro/courses/pc/laboratoare/10,
+archive that contains the following files:
+    ~~~buffer.c & buffer.have
+    ~~~helpers.c & helpers.h
+    ~~~requests.c & requests.h
+~ I have used the parson library because it was recommended in the text
+~ In Utils.c I have created some auxiliary functions such as:
+    ~~~verifyCommand => for finding the current read command
+    ~~~getUSerInfo => which returns a string in json format, containg the credentials of 
+       the user
+    ~~~findNrOfOccurences => returns the number of times a substring exists in another string
+    ~~~textBetweenTwoStrings => finds the string between two other strings in a given string
+    ~~~getBookInfo => returns the message for the newly created book with all the details in-
+    cluded in json format.
+
+~Client.c :
+~ In the while loop the commands are read and according to their number in the commandArray 
+  other specific functions are called
+  Fristly, I have made the connection to the server by using open_connection function
+  Then the command is read.
+
+~ Register Command:
+    ~~~ dinamically allocate the url and call getUSerInfo function to receive the string with 
+    users's credentials in json format
+    ~~~ call compute_post_request with the specific IP, url and type
+    ~~~ send to server and than receive a response
+    ~~~ if there is at least one occurence of the string "error" in the response, then it means
+    that the username is already taken, otherwise the registration was successful
+
+~ Login Command:
+    ~~~ create url
+    ~~~ call getUSerInfo function to receive the string with users's credentials in json format
+    ~~~ call compute_post_request with the specific IP, url and type
+    ~~~ send to server and than receive a response
+    ~~~ if there is at least one occurence of the string "error" in the response, then it means
+    that the credentials are wrong, otherwise the "Set-Cookie: connect.sid" pattern is searched. 
+        if it is not found, then the program will continue, otherwise the cookie is returned by 
+        the function textBetweenTwoStrings
+
+~ Enter_library:
+    ~~~ create url
+    ~~~ if the user is connected than the function compute_get_request is calles
+    ~~~ send to server and than receive a response
+    ~~~ if there is at least one occurence of the string "error" in the response, then it means
+    that there is an error, otherwise the "{\"token\":" pattern is searched. 
+    Then textBetweenTwoStrings function is called in order to return the token and isJWT is 1
+
+~ Add_book:
+    ~~~ call getBookInfo function
+    ~~~ send to server and than receive a response
+    ~~~ if there is at least one occurence of the string "error" in the response, then it means
+    that data is incorrect, otherwise the book is added with success. 
+
+~ Get_book:
+    ~~~ connect to the server
+    ~~~ read the id of the book
+    ~~~ create message
+    ~~~ send to server and receive a response
+    ~~~ if there is at least one occurence of the string "error" in the response, then it means
+    that there is not a book with the given id, otherwise the details of the book are outputed in
+    json format. 
+
+~ Get_books:
+    ~~~ connect to the server
+    ~~~ create message
+    ~~~ send to server and receive a response
+    ~~~ if there is at least one occurence of the string "error" in the response, then it means
+    that there is an error, otherwise the details of every book is  outputed in json format, creating
+    a json list. 
+
+~ Add book:
+    ~~~ connect to the server
+    ~~~ if the user is connected to the library, than a message is created
+    ~~~ send to server and receive response
+    ~~~ if there is at least one occurence of the string "error" in the response, then it means
+    that data is incorrect, otherwise the response is  outputed.
+
+~ Delete book:
+    ~~~ connect to the server
+    ~~~ read the id
+    ~~~ open connection
+    ~~~ compute message
+    ~~~ send to server and receive response
+    ~~~ if there is at least one occurence of the string "error" in the response, then it means
+    that there is not a book with the given id, otherwise the book was removed successfully.
+
+~ Logout:
+    ~~~ connect to the server
+    ~~~ compute message
+    ~~~ send and receive response
+    ~~~ if there is at least one occurence of the string "error" in the response, then it means
+    that there was an error found, otherwise the logout was carried out successfully.
